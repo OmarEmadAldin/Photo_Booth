@@ -1,0 +1,6 @@
+[submodule "external/MODNet"]
+	path = external/MODNet
+	url = https://github.com/ZHKKKe/MODNet.git
+[submodule "external/Harmonizer"]
+	path = external/Harmonizer
+	url = https://github.com/ZHKKKe/Harmonizer.git
