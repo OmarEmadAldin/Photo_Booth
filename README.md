@@ -1,34 +1,84 @@
-# 🖼️ Photo Booth – Portrait Matting & Harmonization
+# 🖼️ **Photo Booth – Intelligent Portrait Matting & Harmonization**
 
-This project integrates two deep learning models — **MODNet** and **Harmonizer** — to create a seamless photo booth experience.
+A complete photo booth system powered by deep learning, integrating **[MODNet](https://github.com/ZHKKKe/MODNet)** and **[Harmonizer](https://github.com/ZHKKKe/Harmonizer)** for realistic human-background compositing.  
 
-- **MODNet** handles **portrait matting** (background removal).
-- **Harmonizer** adjusts **color and lighting consistency** between the subject and the background.
-- Together, they produce realistic and visually consistent results for virtual backgrounds.
+This project enables seamless **real-time portrait matting**, **background selection**, and **lighting harmonization**, creating photo outputs that look natural and professionally blended.  
 
 ---
 
-## 🧠 Project Overview
+## 🌟 **Features**
 
-This repository combines:
-- [MODNet (by ZHKKKe)](https://github.com/ZHKKKe/MODNet) for real-time background matting.
-- [Harmonizer (by ZHKKKe)](https://github.com/ZHKKKe/Harmonizer) for image harmonization.
-- **Custom integration and improvements** that allow both models to run in sequence on live or pre-captured images.
-
-Key custom changes include:
-- 🧩 Simplified model loading for both MODNet and Harmonizer.  
-- ⚙️ Added GPU/CPU compatibility handling.  
-- 🎨 Improved blending and lighting adjustments for more realistic compositing.  
-- 📷 Real-time webcam support for photo booth applications.
+✅ **MODNet Integration** – High-quality human matting (background removal) in real-time.  
+✅ **Harmonizer Integration** – Color and lighting adjustment for realistic subject-background blending.  
+✅ **CPU/GPU Support** – Runs efficiently on both CPU and CUDA-enabled GPUs.  
+✅ **Interactive UI** – Mouse-based background selection interface.  
+✅ **Automated Workflow** – End-to-end pipeline that handles capturing, matting, and harmonization seamlessly.  
+✅ **Clean Modular Design** – Two independent packages: `background_subtraction` and `background_choosing`, integrated by a unified controller.  
 
 ---
 
-## 🧱 Setup Instructions
+## 🧠 **Project Overview**
 
-### 1️ Clone This Repository
+This repository merges and extends two state-of-the-art projects:  
+- **[MODNet (by ZHKKKe)](https://github.com/ZHKKKe/MODNet)** → for real-time portrait matting.  
+- **[Harmonizer (by ZHKKKe)](https://github.com/ZHKKKe/Harmonizer)** → for image harmonization.  
+
+Your custom implementation integrates both in a single workflow with the following improvements:
+
+### 🔧 Custom Enhancements
+- **Simplified Model Loading:** Both models automatically initialize on available hardware (GPU/CPU).  
+- **Unified Execution Flow:** Harmonizer automatically receives MODNet’s composite and mask outputs.  
+- **Dynamic UI System:** Backgrounds can be chosen through a lightweight OpenCV-based user interface.  
+- **Automation & Modularity:** Each stage (capture → matte → harmonize) runs independently or together.  
+- **Improved Performance:** Optimized pre/post-processing for stable real-time webcam inference.  
+
+---
+
+## 🏗️ **Repository Structure**
+
+```
+Photo_Booth/
+│
+├── background_subtraction/
+│   ├── modnet_integration.py        # MODNet inference logic (CPU/GPU)
+│   ├── modnet_webcam.py             # Real-time webcam capture & matting
+│   └── __init__.py
+│
+├── background_choosing/
+│   ├── ui_manager.py                # Simple UI for selecting background
+│   ├── overlay_image.py             # Blending utility
+│   └── __init__.py
+│
+├── external/
+│   ├── MODNet/                      # Cloned original MODNet repo
+│   └── Harmonizer/                  # Cloned original Harmonizer repo
+│
+├── modnet changes/                  # Your MODNet modifications
+├── harmonizer changes/              # Your Harmonizer modifications
+│
+├── capture_results/                 # Auto-saved composites and masks
+│
+├── run_prod.py                      # Core runtime that captures and saves results
+├── try.py                           # Modified Harmonizer main file (CPU/GPU compatible)
+├── run_both.py                      # Orchestrates both pipelines via subprocess
+│
+└── README.md
+```
+
+---
+
+## ⚙️ **Setup Instructions**
+
+### 1️⃣ Clone This Repository
 
 ```bash
+git clone https://github.com/OmarEmadAldin/Photo_Booth.git
+cd Photo_Booth
+```
 
+### 2️⃣ Clone the Original Repositories
+
+```bash
 mkdir external
 cd external
 
@@ -37,22 +87,152 @@ git clone https://github.com/ZHKKKe/Harmonizer.git
 
 cd ..
 ```
-### 2 Add the changed files 
+
+### 3️⃣ Add Your Custom Changes
+
+Copy your modified files into the corresponding projects:
+
 ```bash
-https://github.com/OmarEmadAldin/Photo_Booth.git
+# Apply MODNet modifications
+cp -r "modnet changes/." "external/MODNet/"
+
+# Apply Harmonizer modifications
+cp -r "harmonizer changes/." "external/Harmonizer/"
 ```
-add each one in each coressponding file
 
+---
 
-- **The changes for modnet**
-  -- Background subtraction package code in which i use the pretrained model to made up a code that work on CPU and GPU
-  -- Background Choosing is a simple ui for choosing which background needed to be in the output using mouse cursor and it's also a package
-  -- run_prod.py the python code in which i call both packages and capture the image and save both image the composite and the mask in capture_result file in the harmonizer file
- **The changes for harmonizer**
-  -- The capture_result file that receive from the code in modnet the two images
-  -- try.py the harmonizer code that works both on gpu and cpu
+## 🧩 **Dependencies**
 
-## Final code
-- run_both.py code it runs both codes using subprocess and runs one after the second one ends
+Make sure you have **Python 3.8+** and the required dependencies:
 
+```bash
+pip install -r requirements.txt
+```
+
+If running on GPU:
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+```
+
+---
+
+## 🚀 **Usage**
+
+You can use the project in three modes depending on your needs.
+
+---
+
+### 🧍‍♂️ **1. Run MODNet Only (Background Subtraction)**
+
+Run the portrait matting module that removes the background and saves both:
+- the **composite image**
+- the **alpha mask**
+
+```bash
+python run_prod.py
+```
+
+**Output:**  
+- Saved inside `capture_results/`  
+  - `composite.png`  
+  - `mask.png`
+
+This script:
+- Loads the MODNet pretrained model (`modnet_webcam_portrait_matting.ckpt`)
+- Captures the frame from the webcam
+- Generates the matte and composite
+- Saves both results for the next stage (Harmonizer)
+
+---
+
+### 🌅 **2. Run Harmonizer Only**
+
+Harmonizes the images saved by MODNet.  
+
+```bash
+python harmonizer/try.py
+```
+
+This script:
+- Loads both `composite.png` and `mask.png` from `capture_results/`
+- Runs the Harmonizer model
+- Produces the final harmonized image
+
+**Output:**  
+- `harmonized.png` in `external/Harmonizer/outputs/`
+
+---
+
+### ⚡ **3. Run the Full Integrated Pipeline**
+
+To automatically run both MODNet and Harmonizer sequentially using `subprocess`:
+
+```bash
+python run_both.py
+```
+
+This script:
+1. Launches MODNet for portrait matting  
+2. Waits for the capture and result saving  
+3. Runs Harmonizer on the results automatically  
+4. Displays and saves the harmonized final output
+
+---
+
+## 🧰 **System Requirements**
+
+| Component | Minimum | Recommended |
+|------------|-----------|-------------|
+| CPU | Intel i5 8th Gen | Intel i7 / AMD Ryzen 7 |
+| GPU | None (CPU supported) | NVIDIA GPU with CUDA ≥ 11.8 |
+| RAM | 8 GB | 16 GB |
+| OS | Windows / Linux | Ubuntu 22.04 or Windows 11 |
+
+---
+
+## 🪄 **Pipeline Summary**
+
+```text
+[Webcam Frame]
+     ↓
+ [MODNet]
+     ↓ produces → (Composite, Mask)
+     ↓
+ [Harmonizer]
+     ↓
+ [Final Harmonized Output]
+```
+
+💡 The integration ensures that the **subject is cleanly extracted** and **realistically blended** into any chosen background.
+
+---
+
+## 🎨 **User Interface**
+
+- A simple **OpenCV window** allows you to select a background interactively.
+- Use the **mouse cursor** to choose the desired background image.
+- The system overlays the subject on top of the selected background and harmonizes lighting automatically.
+
+---
+
+## 📸 **Example Results**
+
+| Step | Example |
+|------|----------|
+| Original Frame | ![Original](assets/example_original.jpg) |
+| MODNet Matte | ![Matte](assets/example_mask.jpg) |
+| Harmonized Composite | ![Harmonized](assets/example_harmonized.jpg) |
+
+*(You can replace these images with your actual results later.)*
+
+---
+
+## 📜 **Credits & References**
+
+- [MODNet: Real-Time Trimap-Free Portrait Matting](https://github.com/ZHKKKe/MODNet)  
+- [Harmonizer: Learning to Harmonize with Real Data](https://github.com/ZHKKKe/Harmonizer)  
+
+**Integration and Engineering by:** [Omar Emad Eldin](https://github.com/OmarEmadAldin)  
+© 2025 — Custom extensions, harmonized pipeline, and UI system designed for practical photo booth applications.
 
