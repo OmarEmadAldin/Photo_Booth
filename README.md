@@ -214,17 +214,6 @@ This script:
 - Use the **mouse cursor** to choose the desired background image.
 - The system overlays the subject on top of the selected background and harmonizes lighting automatically.
 
----
-
-## 📸 **Example Results**
-
-| Step | Example |
-|------|----------|
-| Original Frame | ![Original](assets/example_original.jpg) |
-| MODNet Matte | ![Matte](assets/example_mask.jpg) |
-| Harmonized Composite | ![Harmonized](assets/example_harmonized.jpg) |
-
-*(You can replace these images with your actual results later.)*
 
 ---
 
